@@ -32,6 +32,6 @@ public class ProductController {
     @PatchMapping("/{id}")
     public ResponseEntity<?> sellProduct(@PathVariable("id") Long id, @RequestBody ProductDto dto){
         productService.sellProduct(id, dto);
-        return ResponseEntity.ok(SELL_MESSAGE);
+        return ResponseEntity.accepted().body(SELL_MESSAGE);
     }
 }
