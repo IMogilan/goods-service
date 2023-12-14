@@ -10,7 +10,9 @@ import ru.astondevs.goodsservice.service.ProductService;
 @RequestMapping("/api/goods/")
 public class ProductController {
 
-    ProductService productService;
+    public static final String SELL_MESSAGE = "Product sold";
+
+    private final ProductService productService;
 
     @Autowired
     public ProductController(ProductService productService) {
@@ -30,6 +32,6 @@ public class ProductController {
     @PatchMapping("/{id}")
     public ResponseEntity<?> sellProduct(@PathVariable("id") Long id, @RequestBody ProductDto dto){
         productService.sellProduct(id, dto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(SELL_MESSAGE);
     }
 }

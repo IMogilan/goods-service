@@ -11,6 +11,7 @@ import ru.astondevs.goodsservice.mapper.ProductMapper;
 import ru.astondevs.goodsservice.repository.ProductRepository;
 import ru.astondevs.goodsservice.service.ProductService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -51,7 +52,9 @@ public class ProductServiceImpl implements ProductService {
         var product = productRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("Product with id = " + id + " not found"));
 
-        if(product.getPrice() != productDto.price()){
+        var priceFromDataBase = product.getPrice();
+        var priceFromRequest = productDto.price();
+        if(!priceFromDataBase.equals(priceFromRequest)){
             throw new PriceIncorrectException("Sorry, the price of the product has changed.");
         }
 
