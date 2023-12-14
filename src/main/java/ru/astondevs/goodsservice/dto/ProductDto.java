@@ -1,7 +1,6 @@
 package ru.astondevs.goodsservice.dto;
 
-import lombok.Value;
+import java.math.BigDecimal;
 
-@Value
-public record ProductDto(Long id, String name, String description, Integer quantity, Double price) {
+public record ProductDto(Long id, String name, String description, Integer quantity, BigDecimal price) {
 }

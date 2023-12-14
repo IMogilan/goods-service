@@ -5,9 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Check;
+
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "products", schema = "public")
+@Check(constraints = "quantity >= 0")
+@Check(constraints = "price >= 0.01")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,6 +27,6 @@ public class Product {
     String description;
     @Column(name = "quantity", nullable = false)
     Integer quantity;
-    @Column(name = "price")
-    Double price;
+    @Column(name = "price", columnDefinition = "decimal", precision = 14, scale = 2)
+    BigDecimal price;
 }
