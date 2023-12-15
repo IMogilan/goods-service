@@ -1,4 +1,4 @@
-package ru.astondevs.goodsservice;
+/*package ru.astondevs.goodsservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -21,3 +21,4 @@ public class TestGoodsServiceApplication {
 	}
 
 }
+*/
