@@ -46,7 +46,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void sellProduct(Long id, ProductDto productDto) {
+    public void sellProduct(Long id, ProductDto productDto, Integer requestedQuantity) {
         Objects.requireNonNull(id);
 
         var product = productRepository.findById(id).orElseThrow(() ->
@@ -54,17 +54,19 @@ public class ProductServiceImpl implements ProductService {
 
         var priceFromDataBase = product.getPrice();
         var priceFromRequest = productDto.price();
-        if(!priceFromDataBase.equals(priceFromRequest)){
+        if (!priceFromDataBase.equals(priceFromRequest)) {
             throw new PriceIncorrectException("Sorry, the price of the product has changed.");
         }
 
-        var quantity = product.getQuantity();
-        if (quantity <= 0) {
+        Integer quantityInDb = product.getQuantity();
+        if (quantityInDb <= 0) {
             throw new ProductOutOfStockException("Sorry, the product is currently out of stock.");
+        } else if (quantityInDb - requestedQuantity < 0) {
+            throw new ProductOutOfStockException("Sorry, the remain quantity of product " + quantityInDb);
         }
 
-        quantity -= 1;
-        product.setQuantity(quantity);
+        quantityInDb -= requestedQuantity;
+        product.setQuantity(quantityInDb);
         productRepository.save(product);
     }
 }

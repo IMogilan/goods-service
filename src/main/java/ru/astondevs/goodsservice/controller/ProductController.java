@@ -30,8 +30,9 @@ public class ProductController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> sellProduct(@PathVariable("id") Long id, @RequestBody ProductDto dto){
-        productService.sellProduct(id, dto);
+    public ResponseEntity<?> sellProduct(@PathVariable("id") Long id, @RequestBody ProductDto dto,
+                                         @RequestParam(required = false, defaultValue = "1") int quantity){
+        productService.sellProduct(id, dto, quantity);
         return ResponseEntity.accepted().body(SELL_MESSAGE);
     }
 }
