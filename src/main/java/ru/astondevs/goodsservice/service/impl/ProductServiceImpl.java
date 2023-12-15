@@ -11,7 +11,6 @@ import ru.astondevs.goodsservice.mapper.ProductMapper;
 import ru.astondevs.goodsservice.repository.ProductRepository;
 import ru.astondevs.goodsservice.service.ProductService;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -58,15 +57,15 @@ public class ProductServiceImpl implements ProductService {
             throw new PriceIncorrectException("Sorry, the price of the product has changed.");
         }
 
-        Integer quantityInDb = product.getQuantity();
-        if (quantityInDb <= 0) {
+        var quantityInDataBase = product.getQuantity();
+        if (quantityInDataBase <= 0) {
             throw new ProductOutOfStockException("Sorry, the product is currently out of stock.");
-        } else if (quantityInDb - requestedQuantity < 0) {
-            throw new ProductOutOfStockException("Sorry, the remain quantity of product " + quantityInDb);
+        } else if (requestedQuantity > quantityInDataBase) {
+            throw new ProductOutOfStockException("Sorry, the remain quantity of product " + quantityInDataBase);
         }
 
-        quantityInDb -= requestedQuantity;
-        product.setQuantity(quantityInDb);
+        quantityInDataBase -= requestedQuantity;
+        product.setQuantity(quantityInDataBase);
         productRepository.save(product);
     }
 }
