@@ -8,6 +8,11 @@
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 
     <changeSet id="1" author="greenteam">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="products"/>
+            </not>
+        </preConditions>
         <createTable tableName="products" schemaName="public">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true"/>
