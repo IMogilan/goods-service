@@ -9,9 +9,8 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import ru.astondevs.goodsservice.TestData;
 import ru.astondevs.goodsservice.model.Product;
-
-import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,8 +49,9 @@ class ProductRepositoryTest {
 
     @Test
     void findByIdSuccess() {
-        var id = 1L;
-        var expectingResult = new Product(1L, "Book1", "Description for Book1", 10, BigDecimal.valueOf(19.99));
+        var expectingResult = TestData.getProduct1();
+        var id = expectingResult.getId();
+
         var actualResult = productRepository.findById(id);
 
         assertThat(actualResult).isNotNull();
@@ -69,7 +69,7 @@ class ProductRepositoryTest {
 
     @Test
     void updateSuccess() {
-        var id = 1L;
+        var id = TestData.getProduct1().getId();
 
         var prevListSize = productRepository.findAll().size();
 
@@ -91,5 +91,4 @@ class ProductRepositoryTest {
         var newListSize = productRepository.findAll().size();
         assertThat(prevListSize).isEqualTo(newListSize);
     }
-
 }
