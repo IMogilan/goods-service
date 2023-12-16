@@ -9,5 +9,5 @@ public interface ProductService {
 
     ProductDto readById(Long id);
 
-    void sellProduct(Long id, ProductDto productDto, Integer quantity);
+    void sellProduct(Long id, ProductDto productDto);
 }

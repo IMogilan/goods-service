@@ -45,14 +45,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void sellProduct(Long id, ProductDto productDto, Integer requestedQuantity) {
+    public void sellProduct(Long id, ProductDto productDto) {
         Objects.requireNonNull(id);
+        Objects.requireNonNull(productDto);
+        var requestedQuantity = productDto.quantity();
+        var priceFromRequest = productDto.price();
+        Objects.requireNonNull(requestedQuantity);
+        Objects.requireNonNull(priceFromRequest);
 
         var product = productRepository.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("Product with id = " + id + " not found"));
 
         var priceFromDataBase = product.getPrice();
-        var priceFromRequest = productDto.price();
         if (!priceFromDataBase.equals(priceFromRequest)) {
             throw new PriceIncorrectException("Sorry, the price of the product has changed.");
         }
