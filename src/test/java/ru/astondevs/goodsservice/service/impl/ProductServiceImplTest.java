@@ -1,13 +1,14 @@
 package ru.astondevs.goodsservice.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import ru.astondevs.goodsservice.dto.ProductDto;
 import ru.astondevs.goodsservice.exception.PriceIncorrectException;
 import ru.astondevs.goodsservice.exception.ProductOutOfStockException;
@@ -22,13 +23,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static ru.astondevs.goodsservice.TestData.getProduct1;
 import static ru.astondevs.goodsservice.TestData.getProduct2;
 import static ru.astondevs.goodsservice.TestData.getProductDto1;
 import static ru.astondevs.goodsservice.TestData.getProductDto2;
+import static ru.astondevs.goodsservice.util.Constant.DEFAULT_PAGE;
+import static ru.astondevs.goodsservice.util.Constant.DEFAULT_SIZE;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceImplTest {
@@ -51,11 +53,13 @@ class ProductServiceImplTest {
     @Test
     void readAll_whenInvoked_thenReturnAllDtoList() {
         List<ProductDto> expected = dtoList;
-        when(repository.findAll()).thenReturn(products);
+        Page<Product> productPage = new PageImpl<>(products);
+        when(repository.findAll(PageRequest.of(Integer.parseInt(DEFAULT_PAGE), Integer.parseInt(DEFAULT_SIZE))))
+                .thenReturn(productPage);
         when(mapper.toDto(product1)).thenReturn(productDto1);
         when(mapper.toDto(product2)).thenReturn(productDto2);
 
-        List<ProductDto> actual = service.readAll();
+        List<ProductDto> actual = service.readAll(PageRequest.of(Integer.parseInt(DEFAULT_PAGE), Integer.parseInt(DEFAULT_SIZE)));
 
         assertEquals(expected, actual);
     }

@@ -2,6 +2,7 @@ package ru.astondevs.goodsservice.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.astondevs.goodsservice.dto.ProductDto;
@@ -29,8 +30,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDto> readAll() {
-        return productRepository.findAll().stream()
+    public List<ProductDto> readAll(PageRequest pageRequest) {
+        return productRepository.findAll(pageRequest).stream()
                 .map(productMapper::toDto)
                 .collect(Collectors.toList());
     }

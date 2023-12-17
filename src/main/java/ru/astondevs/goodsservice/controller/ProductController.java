@@ -1,17 +1,19 @@
 package ru.astondevs.goodsservice.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.astondevs.goodsservice.dto.ProductDto;
 import ru.astondevs.goodsservice.service.ProductService;
 
+import static ru.astondevs.goodsservice.util.Constant.DEFAULT_PAGE;
+import static ru.astondevs.goodsservice.util.Constant.DEFAULT_SIZE;
+import static ru.astondevs.goodsservice.util.Constant.SELL_MESSAGE;
+
 @RestController
 @RequestMapping("/api/goods/")
 public class ProductController {
-
-    public static final String SELL_MESSAGE = "Product sold";
-
     private final ProductService productService;
 
     @Autowired
@@ -20,17 +22,18 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAll(){
-        return ResponseEntity.ok(productService.readAll());
+    public ResponseEntity<?> getAll(@RequestParam(required = false, defaultValue = DEFAULT_PAGE) int page,
+                                      @RequestParam(required = false, defaultValue = DEFAULT_SIZE) int size) {
+        return ResponseEntity.ok(productService.readAll(PageRequest.of(page, size)));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable("id") Long id){
+    public ResponseEntity<?> getById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(productService.readById(id));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> sellProduct(@PathVariable("id") Long id, @RequestBody ProductDto dto){
+    public ResponseEntity<?> sellProduct(@PathVariable("id") Long id, @RequestBody ProductDto dto) {
         productService.sellProduct(id, dto);
         return ResponseEntity.accepted().body(SELL_MESSAGE);
     }

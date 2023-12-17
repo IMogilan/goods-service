@@ -4,6 +4,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -13,6 +14,8 @@ import ru.astondevs.goodsservice.TestData;
 import ru.astondevs.goodsservice.model.Product;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static ru.astondevs.goodsservice.util.Constant.DEFAULT_PAGE;
+import static ru.astondevs.goodsservice.util.Constant.DEFAULT_SIZE;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -90,5 +93,12 @@ class ProductRepositoryTest {
 
         var newListSize = productRepository.findAll().size();
         assertThat(prevListSize).isEqualTo(newListSize);
+    }
+
+    @Test
+    void findAllSuccessWithPaging() {
+        var actualResult = productRepository.findAll(PageRequest.of(0,2));
+        assertThat(actualResult).isNotEmpty();
+        assertThat(actualResult).hasSize(2);
     }
 }

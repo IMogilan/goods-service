@@ -2,11 +2,11 @@ package ru.astondevs.goodsservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.astondevs.goodsservice.dto.ProductDto;
 import ru.astondevs.goodsservice.service.ProductService;
@@ -20,7 +20,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.astondevs.goodsservice.TestData.getProductDto1;
-import static ru.astondevs.goodsservice.controller.ProductController.SELL_MESSAGE;
+import static ru.astondevs.goodsservice.util.Constant.DEFAULT_PAGE;
+import static ru.astondevs.goodsservice.util.Constant.DEFAULT_SIZE;
+import static ru.astondevs.goodsservice.util.Constant.SELL_MESSAGE;
 
 @WebMvcTest(ProductController.class)
 class ProductControllerTest {
@@ -38,7 +40,7 @@ class ProductControllerTest {
     @Test
     void getAll_whenRequested_thenReturnListDtoAndStatusOk() {
         List<ProductDto> expected = products;
-        when(service.readAll()).thenReturn(expected);
+        when(service.readAll(PageRequest.of(Integer.parseInt(DEFAULT_PAGE), Integer.parseInt(DEFAULT_SIZE)))).thenReturn(expected);
 
         String actual = mockMvc.perform(get("/api/goods/"))
                 .andExpect(status().isOk())
