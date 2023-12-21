@@ -25,6 +25,9 @@
                 <constraints nullable="false" />
             </column>
             <column name="price" type="DECIMAL(14,2)"/>
+            <column name="store_id" type="BIGINT">
+                <constraints nullable="false" />
+            </column>
         </createTable>
         <sql>
             ALTER TABLE products ADD CONSTRAINT quantity_check CHECK (quantity &gt;= 0);

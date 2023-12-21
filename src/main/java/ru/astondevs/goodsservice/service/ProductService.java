@@ -4,11 +4,14 @@ import org.springframework.data.domain.PageRequest;
 import ru.astondevs.goodsservice.dto.ProductDto;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ProductService {
-    List<ProductDto> readAll(PageRequest pageRequest);
+    List<ProductDto> readAll(Long storeId, PageRequest pageRequest);
 
-    ProductDto readById(Long id);
+    ProductDto readById(Long storeId, Long id);
 
-    void sellProduct(Long id, ProductDto productDto);
+    ProductDto sellProduct(Long storeId, Long id, ProductDto productDto);
+
+    Map<String, String> sellProducts(Long storeId, List<ProductDto> productsDto);
 }

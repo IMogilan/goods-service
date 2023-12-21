@@ -29,4 +29,6 @@ public class Product {
     Integer quantity;
     @Column(name = "price", columnDefinition = "decimal", precision = 14, scale = 2)
     BigDecimal price;
+    @Column(name = "store_id", nullable = false)
+    Long storeId;
 }

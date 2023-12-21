@@ -54,12 +54,12 @@ class ProductServiceImplTest {
     void readAll_whenInvoked_thenReturnAllDtoList() {
         List<ProductDto> expected = dtoList;
         Page<Product> productPage = new PageImpl<>(products);
-        when(repository.findAll(PageRequest.of(Integer.parseInt(DEFAULT_PAGE), Integer.parseInt(DEFAULT_SIZE))))
+        when(repository.findByStoreId(1L, PageRequest.of(Integer.parseInt(DEFAULT_PAGE), Integer.parseInt(DEFAULT_SIZE))))
                 .thenReturn(productPage);
         when(mapper.toDto(product1)).thenReturn(productDto1);
         when(mapper.toDto(product2)).thenReturn(productDto2);
 
-        List<ProductDto> actual = service.readAll(PageRequest.of(Integer.parseInt(DEFAULT_PAGE), Integer.parseInt(DEFAULT_SIZE)));
+        List<ProductDto> actual = service.readAll(1L, PageRequest.of(Integer.parseInt(DEFAULT_PAGE), Integer.parseInt(DEFAULT_SIZE)));
 
         assertEquals(expected, actual);
     }
@@ -67,50 +67,50 @@ class ProductServiceImplTest {
     @Test
     void readById_whenProductFound_thenReturnDto() {
         ProductDto expected = productDto1;
-        when(repository.findById(productDto1.id())).thenReturn(Optional.of(product1));
+        when(repository.findByStoreIdAndId(1L, productDto1.id())).thenReturn(Optional.of(product1));
         when(mapper.toDto(product1)).thenReturn(productDto1);
 
-        ProductDto actual = service.readById(productDto1.id());
+        ProductDto actual = service.readById(1L, productDto1.id());
 
         assertEquals(expected, actual);
     }
 
     @Test
     void readById_whenProductNotFound_thenThrowException() {
-        when(repository.findById(productDto1.id())).thenReturn(Optional.empty());
+        when(repository.findByStoreIdAndId(1L, productDto1.id())).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class,
-                () -> service.readById(productDto1.id()));
+                () -> service.readById(1L, productDto1.id()));
     }
 
     @Test
     void sellProduct_whenProductFoundAndPriceAndQuantityOk_thenUpdatingInRepository() {
         Product product = getProduct1();
         product.setQuantity(product.getQuantity() - product1.getQuantity());
-        when(repository.findById(productDto1.id())).thenReturn(Optional.of(product1));
+        when(repository.findByStoreIdAndId(1L, productDto1.id())).thenReturn(Optional.of(product1));
         when(repository.save(product)).thenReturn(product);
 
-        service.sellProduct(productDto1.id(), productDto1);
+        service.sellProduct(1L, productDto1.id(), productDto1);
 
         verify(repository, atLeastOnce()).save(product);
     }
 
     @Test
     void sellProduct_whenProductNotFound_thenThrowException() {
-        when(repository.findById(productDto1.id())).thenReturn(Optional.empty());
+        when(repository.findByStoreIdAndId(1L, productDto1.id())).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class,
-                () -> service.sellProduct(productDto1.id(), productDto1));
+                () -> service.sellProduct(1L, productDto1.id(), productDto1));
 
         verify(repository, never()).save(any());
     }
 
     @Test
     void sellProduct_whenPriceIsDiffers_thenThrowException() {
-        when(repository.findById(productDto2.id())).thenReturn(Optional.of(product1));
+        when(repository.findByStoreIdAndId(1L, productDto2.id())).thenReturn(Optional.of(product1));
 
         assertThrows(PriceIncorrectException.class,
-                () -> service.sellProduct(productDto2.id(), productDto2));
+                () -> service.sellProduct(1L, productDto2.id(), productDto2));
 
         verify(repository, never()).save(any());
     }
@@ -120,10 +120,10 @@ class ProductServiceImplTest {
         Product product = getProduct2();
         product.setQuantity(0);
 
-        when(repository.findById(productDto2.id())).thenReturn(Optional.of(product));
+        when(repository.findByStoreIdAndId(1L, productDto2.id())).thenReturn(Optional.of(product));
 
         assertThrows(ProductOutOfStockException.class,
-                () -> service.sellProduct(productDto2.id(), productDto2));
+                () -> service.sellProduct(1L, productDto2.id(), productDto2));
 
         verify(repository, never()).save(any());
     }
@@ -133,10 +133,10 @@ class ProductServiceImplTest {
         Product product = getProduct2();
         product.setQuantity(1);
 
-        when(repository.findById(productDto2.id())).thenReturn(Optional.of(product));
+        when(repository.findByStoreIdAndId(1L, productDto2.id())).thenReturn(Optional.of(product));
 
         assertThrows(ProductOutOfStockException.class,
-                () -> service.sellProduct(productDto2.id(), productDto2));
+                () -> service.sellProduct(1L, productDto2.id(), productDto2));
 
         verify(repository, never()).save(any());
     }

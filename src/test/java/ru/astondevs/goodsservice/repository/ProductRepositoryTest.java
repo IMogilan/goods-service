@@ -84,7 +84,7 @@ class ProductRepositoryTest {
         var updatedQuantity = previousQuantity - 1;
 
         var productWithUpdatedQuantity = new Product(id, entityInDatabase.getName(), entityInDatabase.getDescription(),
-                updatedQuantity, entityInDatabase.getPrice());
+                updatedQuantity, entityInDatabase.getPrice(), 1L);
 
         var updatedValue = productRepository.save(productWithUpdatedQuantity);
         assertThat(updatedValue).isNotNull();

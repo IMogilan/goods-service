@@ -9,12 +9,18 @@ import ru.astondevs.goodsservice.dto.ProductDto;
 import ru.astondevs.goodsservice.exception.PriceIncorrectException;
 import ru.astondevs.goodsservice.exception.ProductOutOfStockException;
 import ru.astondevs.goodsservice.mapper.ProductMapper;
+import ru.astondevs.goodsservice.model.Product;
 import ru.astondevs.goodsservice.repository.ProductRepository;
 import ru.astondevs.goodsservice.service.ProductService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static ru.astondevs.goodsservice.util.Constant.NOT_SELL_MESSAGE;
+import static ru.astondevs.goodsservice.util.Constant.SELL_MESSAGE;
 
 @Service
 @Transactional
@@ -30,23 +36,23 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDto> readAll(PageRequest pageRequest) {
-        return productRepository.findAll(pageRequest).stream()
+    public List<ProductDto> readAll(Long storeId, PageRequest pageRequest) {
+        return productRepository.findByStoreId(storeId, pageRequest).stream()
                 .map(productMapper::toDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public ProductDto readById(Long id) {
+    public ProductDto readById(Long storeId, Long id) {
         Objects.requireNonNull(id);
 
-        var product = productRepository.findById(id).orElseThrow(() ->
+        var product = productRepository.findByStoreIdAndId(storeId, id).orElseThrow(() ->
                 new EntityNotFoundException("Product with id = " + id + " not found"));
         return productMapper.toDto(product);
     }
 
     @Override
-    public void sellProduct(Long id, ProductDto productDto) {
+    public ProductDto sellProduct(Long storeId, Long id, ProductDto productDto) {
         Objects.requireNonNull(id);
         Objects.requireNonNull(productDto);
         var requestedQuantity = productDto.quantity();
@@ -54,7 +60,7 @@ public class ProductServiceImpl implements ProductService {
         Objects.requireNonNull(requestedQuantity);
         Objects.requireNonNull(priceFromRequest);
 
-        var product = productRepository.findById(id).orElseThrow(() ->
+        var product = productRepository.findByStoreIdAndId(storeId, id).orElseThrow(() ->
                 new EntityNotFoundException("Product with id = " + id + " not found"));
 
         var priceFromDataBase = product.getPrice();
@@ -71,6 +77,27 @@ public class ProductServiceImpl implements ProductService {
 
         quantityInDataBase -= requestedQuantity;
         product.setQuantity(quantityInDataBase);
-        productRepository.save(product);
+        Product savedProduct = productRepository.save(product);
+        return productMapper.toDto(savedProduct);
+    }
+
+    @Override
+    public Map<String, String> sellProducts(Long storeId, List<ProductDto> productsDto) {
+        Map<String, String> sellingStatus = new HashMap<>();
+        String msg = null;
+        for (ProductDto dto : productsDto) {
+            ProductDto savedProduct = null;
+            try {
+                savedProduct = sellProduct(storeId, dto.id(), dto);
+            } catch (ProductOutOfStockException | PriceIncorrectException | EntityNotFoundException e) {
+                msg = e.getMessage();
+            }
+            if (savedProduct != null) {
+                sellingStatus.put(dto.name(), SELL_MESSAGE);
+            } else {
+                sellingStatus.put(dto.name(), msg);
+            }
+        }
+        return sellingStatus;
     }
 }
