@@ -3,7 +3,7 @@ services:
   goods-service:
     build: .
     ports:
-      - "8080:8080"
+      - "7777:7777"
     depends_on:
       - goods-db
     environment:
