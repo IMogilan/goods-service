@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static ru.astondevs.goodsservice.util.Constant.NOT_SELL_MESSAGE;
 import static ru.astondevs.goodsservice.util.Constant.SELL_MESSAGE;
 
 @Service
@@ -56,17 +55,10 @@ public class ProductServiceImpl implements ProductService {
         Objects.requireNonNull(id);
         Objects.requireNonNull(productDto);
         var requestedQuantity = productDto.quantity();
-        var priceFromRequest = productDto.price();
         Objects.requireNonNull(requestedQuantity);
-        Objects.requireNonNull(priceFromRequest);
 
         var product = productRepository.findByStoreIdAndId(storeId, id).orElseThrow(() ->
                 new EntityNotFoundException("Product with id = " + id + " not found"));
-
-        var priceFromDataBase = product.getPrice();
-        if (!priceFromDataBase.equals(priceFromRequest)) {
-            throw new PriceIncorrectException("Sorry, the price of the product has changed.");
-        }
 
         var quantityInDataBase = product.getQuantity();
         if (quantityInDataBase <= 0) {
@@ -82,20 +74,20 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Map<String, String> sellProducts(Long storeId, List<ProductDto> productsDto) {
-        Map<String, String> sellingStatus = new HashMap<>();
-        String msg = null;
+    public Map<Long, String> sellProducts(Long storeId, List<ProductDto> productsDto) {
+        Map<Long, String> sellingStatus = new HashMap<>();
+        String message = null;
         for (ProductDto dto : productsDto) {
             ProductDto savedProduct = null;
             try {
                 savedProduct = sellProduct(storeId, dto.id(), dto);
             } catch (ProductOutOfStockException | PriceIncorrectException | EntityNotFoundException e) {
-                msg = e.getMessage();
+                message = e.getMessage();
             }
             if (savedProduct != null) {
-                sellingStatus.put(dto.name(), SELL_MESSAGE);
+                sellingStatus.put(dto.id(), SELL_MESSAGE);
             } else {
-                sellingStatus.put(dto.name(), msg);
+                sellingStatus.put(dto.id(), message);
             }
         }
         return sellingStatus;

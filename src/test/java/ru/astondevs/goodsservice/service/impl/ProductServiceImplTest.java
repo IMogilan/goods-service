@@ -10,7 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import ru.astondevs.goodsservice.dto.ProductDto;
-import ru.astondevs.goodsservice.exception.PriceIncorrectException;
 import ru.astondevs.goodsservice.exception.ProductOutOfStockException;
 import ru.astondevs.goodsservice.mapper.ProductMapper;
 import ru.astondevs.goodsservice.model.Product;
@@ -101,16 +100,6 @@ class ProductServiceImplTest {
 
         assertThrows(EntityNotFoundException.class,
                 () -> service.sellProduct(1L, productDto1.id(), productDto1));
-
-        verify(repository, never()).save(any());
-    }
-
-    @Test
-    void sellProduct_whenPriceIsDiffers_thenThrowException() {
-        when(repository.findByStoreIdAndId(1L, productDto2.id())).thenReturn(Optional.of(product1));
-
-        assertThrows(PriceIncorrectException.class,
-                () -> service.sellProduct(1L, productDto2.id(), productDto2));
 
         verify(repository, never()).save(any());
     }

@@ -13,5 +13,5 @@ public interface ProductService {
 
     ProductDto sellProduct(Long storeId, Long id, ProductDto productDto);
 
-    Map<String, String> sellProducts(Long storeId, List<ProductDto> productsDto);
+    Map<Long, String> sellProducts(Long storeId, List<ProductDto> productsDto);
 }

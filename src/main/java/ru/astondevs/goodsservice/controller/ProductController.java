@@ -47,7 +47,7 @@ public class ProductController {
 
     @PatchMapping("/{storeId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public Map<String, String> sellProducts(@PathVariable("storeId") Long storeId,
+    public Map<Long, String> sellProducts(@PathVariable("storeId") Long storeId,
                                             @RequestBody List<ProductDto> dtos) {
         return productService.sellProducts(storeId, dtos);
     }
