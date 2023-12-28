@@ -38,14 +38,14 @@ public class ProductController {
         return ResponseEntity.ok(productService.readById(storeId, id));
     }
 
-    @PatchMapping("/{storeId}/{id}")
+    @PutMapping("/{storeId}/{id}")
     public ResponseEntity<?> sellProduct(@PathVariable("storeId") Long storeId,
                                          @PathVariable("id") Long id, @RequestBody ProductDto dto) {
         productService.sellProduct(storeId, id, dto);
         return ResponseEntity.accepted().body(SELL_MESSAGE);
     }
 
-    @PatchMapping("/{storeId}")
+    @PutMapping("/{storeId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public Map<Long, String> sellProducts(@PathVariable("storeId") Long storeId,
                                             @RequestBody List<ProductDto> dtos) {
